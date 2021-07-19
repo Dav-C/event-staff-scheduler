@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block page_content %}
+
+<div class="page-wrapper">
+{# header #}
+        <div class="logo-bar">
+                <p class="logo-bar-title">Event Staff Scheduler</p>
+            <div class="nav-btn-wrapper">
+                {% if user.is_authenticated %}
+                    <p class="logged-in-text">Logged in as {{ user.username }}</p>
+                {% endif %}
+                <div id="navButton" class="nav-btn">
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                </div>
+            </div>
+        </div>
+        <div id="navBar" class="nav-bar">
+            <ul>
+                <li class="nav-item"><a href="{% url 'event_list' %}">Schedule</a></li>
+                <li class="nav-item"><a href="{% url 'event_planning' %}">Planning</a></li>
+                <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </div>
+        {% for message in messages %}
+            {% if message.tags == "warning" %}
+                <div class="message-red-box fade-out">{{ message }}</div>
+            {% else %}
+                <div class="message-green-box fade-out">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+        <div class="options-bar">
+            {% if update %}
+                <a href="{{ teammessage.get_absolute_url }}">
+                    <button class="options-btn-green" form="teamMessageForm">Save Changes</button>
+                </a>
+            {% else %}
+                <a href="{{ teammessage.get_absolute_url }}">
+                    <button class="options-btn-green" form="teamMessageForm">Save</button>
+                </a>
+            {% endif %}
+            <a href="javascript:window.history.back()">
+                <button class="options-btn-red">Cancel</button>
+            </a>
+        </div>
+    </div>
+{# end header #}
+    <div class="flex-centered">
+        <div class="detail-box">
+            <form method="post" id="teamMessageForm">
+            {% csrf_token %}
+                {% if update %}
+                    <div class="detail-box-title"><b><u>Edit Team Message</u></b></div>
+                {% else %}
+                    <div class="detail-box-title"><b><u>Create New Team Message</u></b></div>
+                {% endif %}
+                <br/>
+                <div class="detail-box-content">
+                    <div class="team-message-box-detail-section">
+                        <ul>
+                            {% if update %}
+                                <li><b>Last Updated</b></li>
+                                <li class="detail-box-form-field full-width darkened_background">
+                                    {{ teammessage.updated_at|date:'l - m/d/y' }}
+                                </li>
+                                <li><br/><br/></li>
+                            {% endif %}
+                            <li><b>Message Title</b></li>
+                            <li>{{ form.message_title }}</li>
+                            <li><br/><br/></li>
+                            <li><b>Message Content</b></li>
+                            <li>{{ form.message }}</li>
+                            <li><br/><br/></li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock page_content %}

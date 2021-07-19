@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% load tz %}
+{% block page_content %}
+
+<div class="page-wrapper">
+{# header #}
+        <div class="logo-bar">
+                <p class="logo-bar-title">Event Staff Scheduler</p>
+            <div class="nav-btn-wrapper">
+                {% if user.is_authenticated %}
+                    <p class="logged-in-text">Logged in as {{ user.username }}</p>
+                {% endif %}
+                <div id="navButton" class="nav-btn">
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                </div>
+            </div>
+        </div>
+        <div id="navBar" class="nav-bar">
+            <ul>
+                <li class="nav-item"><a href="{% url 'event_list' %}">Schedule</a></li>
+                <li class="nav-item"><a href="{% url 'event_planning' %}">Planning</a></li>
+                <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </div>
+        {% for message in messages %}
+            {% if message.tags == "warning" %}
+                <div class="message-red-box fade-out">{{ message }}</div>
+            {% else %}
+                <div class="message-green-box fade-out">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+        <div class="options-bar">
+            {% if update %}
+                <a href="{{ event.get_absolute_url }}">
+                    <button class="options-btn-green" form="eventForm">Save Changes</button>
+                </a>
+                <a href="{% url 'event_delete' event.slug %}">
+                    <button class="options-btn-red">Delete Event</button>
+                </a>
+            {% else %}
+                <a href="{{ event.get_absolute_url }}">
+                    <button class="options-btn-green" form="eventForm">Save</button>
+                </a>
+            {% endif %}
+            <a href="javascript:window.history.back()">
+                <button class="options-btn-red">Cancel</button>
+            </a>
+        </div>
+    </div>
+{#end header #}
+    <div class="flex-centered">
+        <div class="detail-box">
+                {% if update %}
+                    <div class="detail-box-title"><b><u>Edit Event Details</u></b></div>
+                {% else %}
+                    <div class="detail-box-title"><b><u>Create New Event</u></b></div>
+                {% endif %}
+            <form method="post" id="eventForm" class="event-form">
+            {% csrf_token %}
+                <br/>
+                    {{ form.title|add_class:"detail-box-form-field title" }}
+                <div class="detail-box-content">
+                    <div class="event-detail-section">
+                        <ul>
+                            <li><b>Event Start</b></li>
+                            <li>{{ form.start_datetime }}</li>
+                            <li><br/></li>
+                            <li><b>Event End</b></li>
+                            <li>{{ form.end_datetime }}</li>
+                            <li><br/></li>
+                            <li><b>Event Type</b></li>
+                            <li class="">{{ form.event_type|add_class:"detail-box-form-field" }}</li>
+                            <li><b>Status</b></li>
+                            <li class="">{{ form.status|add_class:"detail-box-form-field" }}</li>
+                            <li><br/></li>
+                            <li><b>Release</b></li>
+                            <li>{{ form.released|add_class:"detail-box-form-checkbox" }}</li>
+                        </ul>
+                    </div>
+                    <div class="event-detail-section">
+                        <ul>
+                            <li><b>Assign Team Member(s)</b></li>
+                            {% for team_member in form.team_members %}
+                                <li class="detail-box-form-field">
+                                    <label for="{{ team_member.id_for_label }}">
+                                        <span>{{ team_member.tag }}</span>
+                                        {{ team_member.choice_label }}
+                                    </label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="event-detail-section">
+                        <ul>
+                            <li><b>Event Notes</b></li>
+                            <li>{{ form.event_notes|add_class:"detail-box-form-field" }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock page_content %}

@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% load static %}
+{% load tz %}
+
+{% block body_class %}
+    main_navigation_available planning_page
+{% endblock body_class %}
+
+{% block page_content %}
+
+<div class="page-wrapper">
+{# header #}
+        <div class="logo-bar">
+                <p class="logo-bar-title">Event Staff Scheduler</p>
+            <div class="nav-btn-wrapper">
+                {% if user.is_authenticated %}
+                    <p class="logged-in-text">Logged in as {{ user.username }}</p>
+                {% endif %}
+                <div id="navButton" class="nav-btn">
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                </div>
+            </div>
+        </div>
+        <div id="navBar" class="nav-bar">
+            <ul>
+                <li class="nav-item"><a href="{% url 'event_list' %}">Schedule</a></li>
+                <li class="nav-item"><a href="{% url 'event_planning' %}">Planning</a></li>
+                <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </div>
+        {% for message in messages %}
+            {% if message.tags == "warning" %}
+                <div class="message-red-box fade-out">{{ message }}</div>
+            {% else %}
+                <div class="message-green-box fade-out">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+        <div class="options-bar">
+            <a href="{% url 'event_create' %}">
+                <button class="options-btn-blue">Create Event</button>
+            </a>
+            <div class="flex-spacer-small"></div>
+            <form action="" method="GET">
+                <input class="event_planning_search_input" type="search" name="title_search"
+                       placeholder="search event names"
+                       value="{% if title_contains_query %}{{ title_contains_query }}{% else %}{% endif %}">
+                <label for="date_query" class="options-bar-input-label"></label>
+                <input class="schedule-search-input" type="month" name="date_query" id="date_query"
+                       value="{{ date_query|date:'Y-m' }}" required>
+                <select class="event_planning_search_input" name="event_type" id="event_type_search_select">
+                    <option value="all">All Event Types</option>
+                    <option value="online_live" {% if event_type_query == 'online_live' %} selected="selected"{% endif %}>Online - Live
+                    <option value="online_pre_recorded" {% if event_type_query == 'online_pre_recorded' %} selected="selected"{% endif %}>Online Pre-Recorded
+                    <option value="online_hybrid" {% if event_type_query == 'online_hybrid' %} selected="selected"{% endif %}>Online - Hybrid
+                    <option value="in_person" {% if event_type_query == 'in_person' %} selected="selected"{% endif %}>In Person
+                </select>
+                <select class="event_planning_search_input" name="status" id="status_search_select">
+                    <option value="all">Any Status</option>
+                    <option value="planning" {% if status_query == 'planning' %} selected="selected"{% endif %}>Planning
+                    <option value="under_contract" {% if status_query == 'under_contract' %} selected="selected"{% endif %}>Under Contract
+                    <option value="approved" {% if status_query == 'approved' %} selected="selected"{% endif %}>Approved
+                    <option value="cancelled" {% if status_query == 'cancelled' %} selected="selected"{% endif %}>Cancelled
+                    </option>
+                </select>
+                <a>
+                    <button class="options-btn-blue" type="submit">Search</button>
+                </a>
+            </form>
+            <a href="{% url 'event_planning' %}">
+                <button class="options-btn-blue" id="eventPlanningClearSearchBtn" type="submit">Clear Search</button>
+            </a>
+        </div>
+        {% for message in messages %}
+            {% if message.tags == "warning" %}
+                <div class="message-red-box fade-out">{{ message }}</div>
+            {% else %}
+                <div class="message-green-box fade-out">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{# end header #}
+    <div class="flex-centered">
+        <div class="planning-content-wrapper">
+            <div class="planning-content-block">
+                <div class="event-planning-insight-box">
+                    {% if not date_query %}
+                        <p><b>Event Count by Team Member</b></p>
+                        <br/>
+                        <p>Please select months to search</p>
+                    {% else %}
+                        <table>
+                            <tr>
+                                <th>Team Member</th>
+                                <th>Event Count</th>
+                            </tr>
+                            {% for team_member in event_count_by_team_member %}
+                                <tr>
+                                    <td class="event_planning_item">
+                                        {{ team_member.first_name }}&nbsp{{ team_member.last_name }}
+                                    </td>
+                                    <td class="event_planning_item">{{ team_member.events.count }}</td>
+                                </tr>
+                            {% empty %}
+                                <td><i>No Events to display</i></td>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                </div>
+
+                <div class="event-planning-insight-box">
+                    {% if not date_query %}
+                        <p><b>Total Event Count</b></p>
+                        <br/>
+                        <p>Please select months to search</p>
+                    {% else %}
+                        <ul>
+                            <li><b>Event Count by Type</b></li>
+                            <hr>
+                            <li>Online - Live</li>
+                            <li class="event_planning_item">{{ online_live_events.count }}</li>
+                            <li>Online - Pre-Recorded</li>
+                            <li class="event_planning_item">{{ online_pre_recorded_events.count }}</li>
+                            <li>Online - Hybrid</li>
+                            <li class="event_planning_item">{{ online_hybrid_events.count }}</li>
+                            <li><br/></li>
+                            <li>In Person</li>
+                            <li class="event_planning_item">{{ in_person_events.count }}</li>
+                            <li>Total</li>
+                            <li class="event_planning_item">{{ event_list.count }}</li>
+                            <li><br/></li>
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="event-planning-insight-box">
+                    <div class="insight-box-section">
+                        <div class="restrict-release-insight-box-left">
+                            <span><b>Release Schedule</b></span>
+                            <form action="{% url 'event_release' %}" method="GET" id="releaseScheduleForm"
+                                  class="event_planning_search_input">
+                                <input type="date" class="event_planning_search_input" name="min_release_date" required>
+                                <br/>
+                                <input type="date" class="event_planning_search_input" name="max_release_date" required>
+                                <br/>
+                                <div id="scheduleReleaseModal" class="restrict-release-modal-box">
+                                    <span>Would you like release these events?</span>
+                                    <button class="options-btn-green" type="submit" form="releaseScheduleForm">Release Events</button>
+                                    <button id="cancelScheduleReleaseBtn" class="options-btn-red" type="button">Cancel</button>
+                                </div>
+                            </form>
+                            <button id="releaseScheduleConfirmBtn" class="options-btn-green" type="button">Release Events
+                            </button>
+                            <br/>
+                            <br/>
+                            <span><b>Restrict Schedule</b></span>
+                            <form action="{% url 'event_restrict' %}" method="GET" id="restrictScheduleForm"
+                                  class="event_planning_search_input">
+                                <input type="date" class="event_planning_search_input" name="min_restrict_date" required>
+                                <br/>
+                                <input type="date" class="event_planning_search_input" name="max_restrict_date" required>
+                                <br/>
+                                <div id="scheduleRestrictModal" class="restrict-release-modal-box">
+                                    <span>Would you like restrict these events?</span>
+                                    <button class="options-btn-green" type="submit">Restrict Events</button>
+                                    <button class="options-btn-red" type="button" id="cancelScheduleRestrictBtn">Cancel</button>
+                                </div>
+                            </form>
+                            <button id="restrictScheduleConfirmBtn" type="button" class="options-btn-red">Restrict Events
+                            </button>
+                        </div>
+                        <div class="restrict-release-insight-box-right">
+                            <span><u>Event counts for the current calendar year</u></span>
+                            <br/>
+                            <br/>
+                            <table>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>&nbsp;</th>
+                                    <th>Released</th>
+                                    <th>&nbsp;</th>
+                                    <th>Restricted</th>
+                                    <th>&nbsp;</th>
+                                    <th>Total</th>
+                                </tr>
+                                <tr>
+                                    {% for month_count in released_restricted_events_by_month_current_year %}
+                                        <tr>
+                                        {% if month_count.month == 1 %}
+                                            <td class="event_planning_item">January</td>
+                                        {% elif month_count.month == 2 %}
+                                            <td class="event_planning_item">February</td>
+                                        {% elif month_count.month == 3 %}
+                                            <td class="event_planning_item">March</td>
+                                        {% elif month_count.month == 4 %}
+                                            <td class="event_planning_item">April</td>
+                                        {% elif month_count.month == 5 %}
+                                            <td class="event_planning_item">May</td>
+                                        {% elif month_count.month == 6 %}
+                                            <td class="event_planning_item">June</td>
+                                        {% elif month_count.month == 7 %}
+                                            <td class="event_planning_item">July</td>
+                                        {% elif month_count.month == 8 %}
+                                            <td class="event_planning_item">August</td>
+                                        {% elif month_count.month == 9 %}
+                                            <td class="event_planning_item">September</td>
+                                        {% elif month_count.month == 10 %}
+                                            <td class="event_planning_item">October</td>
+                                        {% elif month_count.month == 11 %}
+                                            <td class="event_planning_item">November</td>
+                                        {% elif month_count.month == 12 %}
+                                            <td class="event_planning_item">December</td>
+                                        {% endif %}
+                                        <td></td>
+                                        <td class="event_planning_item">{{ month_count.event_count_released }}</td>
+                                        <td></td>
+                                        <td class="event_planning_item">{{ month_count.event_count_restricted }}</td>
+                                        <td></td>
+                                        <td class="event_planning_item">{{ month_count.event_count_total }}</td>
+                                    {% empty %}
+                                        <td class="event_planning_item">0</td>
+                                    {% endfor %}
+                                    </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <br />
+            {#    begin planning page lower block - planning calendar #}
+            <div class="calendar_month_title">{{ date_query|date:"F Y" }}</div>
+            <br />
+            <div class="planning-content-block lower-block">
+                {% if not date_query %}
+                    <div class="event-planning-insight-box">
+                        <p><b>Events Scheduled by Time and Day</b></p>
+                        <p>Please select months to search</p>
+                    </div>
+                {% else %}
+                    {% for calendar_date in planning_calendar_dates %}
+                        <div class="event-planning-calendar-day">
+                            <div class="full-width">
+                                <a href="{% url "event_list" %}?min_date={{ calendar_date|date:'Y-m-d' }}&max_date={{ calendar_date|date:'Y-m-d' }}">
+                                    <button class="date-text-btn" type="button">{{ calendar_date|date:'D m-d-y' }}</button>
+                                </a>
+                                    <button class="calendar-day-collapse-btn">- collapse</button>
+                                    <button class="calendar-day-expand-btn">+ expand</button>
+                                <hr>
+                            </div>
+                            <div class="calendar-day-lower-section">
+                                <table>
+                                    {% for event in event_count_by_day_and_hour_online_live %}
+                                        {% if event.start_datetime|date:'D m-d-y' == calendar_date|date:'D m-d-y' %}
+                                            <tr>
+                                                <td class="event-planning-times-by-day">{{ event.start_datetime|localtime|time:'g:i a e' }}</td>
+                                                <td class="event-planning-times-by-day count-box">Live</td>
+                                                <td class="event-planning-times-by-day count-box">{{ event.event_count_online_live }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <tr style="border-bottom: 1px solid #000;">
+                                    {% for event in event_count_by_day_and_hour_online_pre_recorded %}
+                                        {% if event.start_datetime|date:'D m-d-y' == calendar_date|date:'D m-d-y' %}
+                                            <tr>
+                                                <td class="event-planning-times-by-day">{{ event.start_datetime|localtime|time:'g:i a e' }}</td>
+                                                <td class="event-planning-times-by-day count-box">Pre-Recorded</td>
+                                                <td class="event-planning-times-by-day count-box">{{ event.event_count_online_pre_recorded }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <tr style="border-bottom: 1px solid #000;">
+                                    {% for event in event_count_by_day_and_hour_online_hybrid %}
+                                        {% if event.start_datetime|date:'D m-d-y' == calendar_date|date:'D m-d-y' %}
+                                            <tr>
+                                                <td class="event-planning-times-by-day">{{ event.start_datetime|localtime|time:'g:i a e' }}</td>
+                                                <td class="event-planning-times-by-day count-box">Hybrid</td>
+                                                <td class="event-planning-times-by-day count-box">{{ event.event_count_online_hybrid }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <tr style="border-bottom: 1px solid #000;">
+                                    {% for event in event_count_by_day_and_hour_in_person %}
+                                        {% if event.start_datetime|date:'D m-d-y' == calendar_date|date:'D m-d-y' %}
+                                            <tr>
+                                                <td class="event-planning-times-by-day">{{ event.start_datetime|localtime|time:'g:i a e' }}</td>
+                                                <td class="event-planning-times-by-day count-box">In Person</td>
+                                                <td class="event-planning-times-by-day count-box">{{ event.event_count_in_person }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {#    end planning page lower block - event counts by date and time #}
+        </div>
+    </div>
+{% endblock page_content %}

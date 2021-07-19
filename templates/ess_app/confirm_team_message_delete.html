@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+
+<div class="page-wrapper">
+{# header #}
+        <div class="logo-bar">
+                <p class="logo-bar-title">Event Staff Scheduler</p>
+            <div class="nav-btn-wrapper">
+                {% if user.is_authenticated %}
+                    <p class="logged-in-text">Logged in as {{ user.username }}</p>
+                {% endif %}
+                <div id="navButton" class="nav-btn">
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                </div>
+            </div>
+        </div>
+        <div id="navBar" class="nav-bar">
+            <ul>
+                <li class="nav-item"><a href="{% url 'event_list' %}">Schedule</a></li>
+                <li class="nav-item"><a href="{% url 'event_planning' %}">Planning</a></li>
+                <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </div>
+        {% for message in messages %}
+            {% if message.tags == "warning" %}
+                <div class="message-red-box fade-out">{{ message }}</div>
+            {% else %}
+                <div class="message-green-box fade-out">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+        <div class="options-bar">
+            {# button is within an <a> to preserve button sizing #}
+            <a>
+                <button class="options-btn-blue" form="deleteTeamMessageForm" type="submit">Confirm Delete</button>
+            </a>
+            <a href="{% url 'team_message_detail' teammessage.slug %}">
+                <button class="options-btn-red">Cancel</button>
+            </a>
+        </div>
+    </div>
+{# end header #}
+
+    <div class="flex-centered">
+        <div class="confirmation-box-large">
+            <form method="post" id="deleteTeamMessageForm">
+                {% csrf_token %}
+                <p>Are you sure you want to delete this team message?</p>
+                <b style="font-size:1.6rem">Last Updated</b>
+                <div class="detail-box-item-field date_field">{{ teammessage.updated_at|date:'l - m/d/y' }}</div>
+                <br/>
+                <b style="font-size:1.6rem">Title</b>
+                <div class="detail-box-item-field">{{ teammessage.message_title }}</div>
+                <br/>
+                <b style="font-size:1.6rem">Message</b>
+                <div class="detail-box-item-field">{{ teammessage.message }}</div>
+                <br/>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

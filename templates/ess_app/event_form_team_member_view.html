@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% load tz %}
+
+{% block body_class %}main_navigation_not_available{% endblock body_class %}
+
+{% block page_content %}
+
+<div class="page-wrapper">
+{# header #}
+        <div class="logo-bar">
+                <p class="logo-bar-title">Event Staff Scheduler</p>
+            <div class="nav-btn-wrapper">
+                {% if user.is_authenticated %}
+                    <p class="logged-in-text">Logged in as {{ user.username }}</p>
+                    <a href="{% url 'logout' %}">
+                        <button class="options-btn-blue">Logout</button>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div id="navBar" class="nav-bar">
+            <ul>
+                <li class="nav-item"><a href="{% url 'event_list' %}">Schedule</a></li>
+                <li class="nav-item"><a href="{% url 'event_planning' %}">Planning</a></li>
+                <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </div>
+        {% for message in messages %}
+            {% if message.tags == "warning" %}
+                <div class="message-red-box fade-out">{{ message }}</div>
+            {% else %}
+                <div class="message-green-box fade-out">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+        <div class="options-bar">
+            <a href="{% url 'event_detail' event.slug %}">
+                <button class="options-btn-green" form="eventForm">Save Changes</button>
+            </a>
+            <a href="javascript:window.history.back()">
+                <button class="options-btn-red">Cancel</button>
+            </a>
+        </div>
+    </div>
+{# end header #}
+    <div class="flex-centered">
+        <div class="detail-box">
+            <form method="post" id="eventForm">
+            {% csrf_token %}
+                <div class="detail-box-title""><b><u>Edit Event Details</u></b></div>
+                <br/>
+                <div class="detail-box-item-field">
+                    {{ event.title }}
+                </div>
+                <div>
+                </div>
+                <div class="detail-box-content">
+                    <div class="event-detail-section">
+                        <ul>
+                            <li><b>Event Start</b></li>
+                            <li class="detail-box-item-field darkened_background">
+                                {{ event.start_datetime|date:'D m/d/y' }} -
+                                {{ event.start_datetime|localtime|time:'g:i a e' }}
+                            </li>
+                            <li><br/></li>
+                            <li><b>Event End</b></li>
+                            <li class="detail-box-item-field darkened_background">
+                                {{ event.end_datetime|date:'D m/d/y' }} -
+                                {{ event.end_datetime|localtime|time:'g:i a e' }}
+                            </li>
+                            <li><br/></li>
+                            <li><b>Event Type</b>
+                            <li class="detail-box-item-field darkened_background">{{ event.get_event_type_display }}</li>
+                            <li><br/></li>
+                            <li><b>Status</b>
+                                {% if event.status %}
+                                    <li class="detail-box-item-field darkened_background">{{ event.get_status_display }}</li>
+                                {% else %}
+                                    <li class="detail-box-item-field darkened_background">Not Specified</li>
+                                {% endif %}
+                        </ul>
+                    </div>
+                    <div class="event-detail-section">
+                        <ul>
+                            <li><b>Team Member(s)</b></li>
+                            {% if event.team_members.all %}
+                                {% for team_member in event.team_members.all %}
+                                    <li class="detail-box-item-field darkened_background">
+                                        {{ team_member.first_name }}&nbsp{{ team_member.last_name }}
+                                        <br/>
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="detail-box-item-field darkened_background">No Team Members Assigned</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="event-detail-section">
+                        <ul>
+                            <li><b>Event Notes</b></li>
+                            <li class="detail-box-item-field event-notes-box darkened_background">{{ event.event_notes }}</li>
+                            <li><br/></li>
+                            <li><b>Team Member Notes</b></li>
+                            <li>{{ form.team_member_notes }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock page_content %}

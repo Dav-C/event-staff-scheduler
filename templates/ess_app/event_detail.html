@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+{% load tz %}
+
+{% block page_content %}
+
+<div class="page-wrapper">
+{# header #}
+        <div class="logo-bar">
+                <p class="logo-bar-title">Event Staff Scheduler</p>
+            <div class="nav-btn-wrapper">
+                {% if user.is_authenticated %}
+                    <p class="logged-in-text">Logged in as {{ user.username }}</p>
+                {% endif %}
+                <div id="navButton" class="nav-btn">
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                </div>
+            </div>
+        </div>
+        <div id="navBar" class="nav-bar">
+            <ul>
+                <li class="nav-item"><a href="{% url 'event_list' %}">Schedule</a></li>
+                <li class="nav-item"><a href="{% url 'event_planning' %}">Planning</a></li>
+                <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </div>
+        {% for message in messages %}
+            {% if message.tags == "warning" %}
+                <div class="message-red-box fade-out">{{ message }}</div>
+            {% else %}
+                <div class="message-green-box fade-out">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+        <div class="options-bar flex-wrap">
+            <a href="{% url 'event_create' %}">
+                <button class="options-btn-blue">Create Event</button>
+            </a>
+            <a href="{% url 'event_update' event.slug %}">
+                <button class="options-btn-blue">Edit Event</button>
+            </a>
+            <a href="{% url 'event_delete' event.slug %}">
+                <button class="options-btn-red">Delete Event</button>
+            </a>
+            <div class="flex-spacer-small"></div>
+            <a href="{% url 'event_list' %}">
+                <button class="options-btn-blue">Schedule</button>
+            </a>
+            <a href="{% url 'event_planning' %}">
+                <button class="options-btn-blue">Planning</button>
+            </a>
+        </div>
+    </div>
+{# end header #}
+
+    <div class="flex-centered">
+        <div class="detail-box">
+            <div class="detail-box-item-field">
+                {{ event.title }}
+            </div>
+            <div class="detail-box-content">
+                <div class="event-detail-section">
+                    <ul>
+                        <li><b>Event Start</b></li>
+                        <li class="detail-box-item-field">
+                            {{ event.start_datetime|date:'D m/d/y' }} -
+                            {{ event.start_datetime|localtime|time:'g:i a e' }}
+                        </li>
+                        <li><br/></li>
+                        <li><b>Event End</b></li>
+                        <li class="detail-box-item-field">
+                            {{ event.end_datetime|date:'D m/d/y' }} -
+                            {{ event.end_datetime|localtime|time:'g:i a e' }}
+                        </li>
+                        <li><br/></li>
+                        <li><b>Assigned Team Member(s)</b></li>
+                        {% if event.team_members.all %}
+                            {% for team_member in event.team_members.all %}
+                                <li class="detail-box-item-field">
+                                    {{ team_member.first_name }}&nbsp{{ team_member.last_name }}
+                                    <br/>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="detail-box-item-field">Not Assigned</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="event-detail-section">
+                    <ul>
+                        <li><b>Event Notes</b></li>
+                        <li class="detail-box-item-field event-notes-box">{{ event.event_notes }}</li>
+                        <li><br/></li>
+                        <li><b>Event Type</b>
+                        <li class="detail-box-item-field">{{ event.get_event_type_display }}</li>
+                        <li><br/></li>
+                        <li><b>Status</b>
+                            {% if event.status %}
+                                <li class="detail-box-item-field">{{ event.get_status_display }}</li>
+                            {% else %}
+                                <li class="detail-box-item-field">Not Specified</li>
+                            {% endif %}
+                        {% if event.released %}
+                            <li class="event-detail-success-box">Event Released</li>
+                        {% else %}
+                            <li class="event-detail-warn-box">Event Not Released</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock page_content %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block page_content %}
+    <div class="login-page-wrapper">
+        <!--header-->
+        <div class="logo-bar">
+            {# Text placed in the paragraph below will be displayed in the logo bar at the top of the page#}
+            <p></p>
+        </div>
+        <!-- end header -->
+        <div class="login-headline">
+            <p>Event Staff Scheduler</p>
+        </div>
+        <div class="login-area-wrapper">
+            <div class="login-form-wrapper">
+                <form method="post" action="{% url 'login' %}" id="loginForm" class="login-form">
+                    {% csrf_token %}
+                    <table>
+                        <tr>
+                            <td>{{ form.username|add_class:"login-form-field" }}</td>
+                        </tr>
+                        <tr>
+                            <td><br/></td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.password|add_class:"login-form-field" }}</td>
+                        </tr>
+                    </table>
+                    <a href="">
+                        <button class="login-btn" type="submit">Sign In</button>
+                        <input type="hidden" name="next" value="{{ next }}">
+                    </a>
+                </form>
+            </div>
+            <div class="login-page-message-box">
+                <span>Sign In</span>
+                <p class="login-page-message">Use your credentials to sign in.</p>
+                <div class="login-auth-messages-wrapper">
+                    {% for message in messages %}
+                        {% if message.tags == "warning" %}
+                            <div class="auth-warning-box">{{ message }}</div>
+                        {% else %}
+                            <div class="auth-success-box">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                    {% if next %}
+                        {% if user.is_authenticated %}
+                            <div class="auth-warning-box">Insufficient access privileges</div>
+                        {% else %}
+                            <div class="auth-warning-box">Please login to continue</div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% if form.errors %}
+                    <p class="login-page-message" style="color:red">Your username and password didn't match. Please try
+                        again.</p>
+                {% endif %}
+            </div>
+        </div>
+        <footer class="footer">
+            <p>&copy; 2021 Company Name</p>
+        </footer>
+    </div>
+
+{% endblock page_content %}
+

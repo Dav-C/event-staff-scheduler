@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_content %}
+
+<div class="page-wrapper">
+{# header #}
+        <div class="logo-bar">
+                <p class="logo-bar-title">Event Staff Scheduler</p>
+            <div class="nav-btn-wrapper">
+                {% if user.is_authenticated %}
+                    <p class="logged-in-text">Logged in as {{ user.username }}</p>
+                {% endif %}
+                <div id="navButton" class="nav-btn">
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                    <div class="line">&nbsp</div>
+                </div>
+            </div>
+        </div>
+        <div id="navBar" class="nav-bar">
+            <ul>
+                <li class="nav-item"><a href="{% url 'event_list' %}">Schedule</a></li>
+                <li class="nav-item"><a href="{% url 'event_planning' %}">Planning</a></li>
+                <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </div>
+        {% for message in messages %}
+            {% if message.tags == "warning" %}
+                <div class="message-red-box fade-out">{{ message }}</div>
+            {% else %}
+                <div class="message-green-box fade-out">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+        <div class="options-bar">
+            <a href="{% url 'team_message_update' teammessage.slug %}">
+                <button class="options-btn-blue">Edit</button>
+            </a>
+            <a href="{% url 'team_message_delete' teammessage.slug %}">
+                <button class="options-btn-red">Delete</button>
+            </a>
+            <div class="flex-spacer-small"></div>
+            <a href="{% url 'event_list' %}">
+                <button class="options-btn-blue">Back to Schedule</button>
+            </a>
+        </div>
+        {% for message in messages %}
+            {% if message.tags == "warning" %}
+                <div class="message-red-box fade-out">{{ message }}</div>
+            {% else %}
+                <div class="message-green-box fade-out">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{# end header #}
+
+    <div class="flex-centered">
+        <div class="detail-box">
+            <div class="detail-box-content">
+                <div class="team-message-box-detail-section">
+                    <b>Last Updated</b>
+                    <div class="detail-box-item-field">
+                        {{ teammessage.updated_at|date:'l - m/d/y' }}
+                    </div>
+                    <br/>
+                    <br/>
+                    <div><b>Message Title</b></div>
+                    <div class="detail-box-item-field">{{ teammessage.message_title }}</div>
+                    <br/>
+                    <br/>
+                    <div><b>Message Content</b></div>
+                    <div class="detail-box-item-field">{{ teammessage.message }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock page_content %}
