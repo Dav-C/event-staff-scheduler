@@ -432,6 +432,7 @@ class EventPlanning(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     online_pre_recorded_events = None
     online_hybrid_events = None
     in_person_events = None
+    all_events_in_selected_month = None
     event_count_by_team_member = None
     planning_calendar_dates = []
     released_restricted_events_by_month_current_year = None
@@ -510,12 +511,25 @@ class EventPlanning(LoginRequiredMixin, PermissionRequiredMixin, ListView):
                 self.queryset = self.queryset.filter(status__iexact="cancelled")
 
         # create filtered query sets by event type for the count box (planning page)
-        self.online_live_events = self.queryset.filter(event_type__iexact="online_live")
+        self.online_live_events = self.queryset.filter(
+            start_datetime__month=self.date_query.month,
+            event_type__iexact="online_live"
+        )
         self.online_pre_recorded_events = self.queryset.filter(
+            start_datetime__month=self.date_query.month,
             event_type__iexact="online_pre_recorded"
         )
-        self.online_hybrid_events = self.queryset.filter(event_type__iexact="online_hybrid")
-        self.in_person_events = self.queryset.filter(event_type__iexact="in_person")
+        self.online_hybrid_events = self.queryset.filter(
+            start_datetime__month=self.date_query.month,
+            event_type__iexact="online_hybrid"
+        )
+        self.in_person_events = self.queryset.filter(
+            start_datetime__month=self.date_query.month,
+            event_type__iexact="in_person"
+        )
+        self.all_events_in_selected_month = self.queryset.filter(
+            start_datetime__month=self.date_query.month,
+        )
 
         # create queryset for team member/event count insight box
         all_team_members = User.objects.filter(groups__name__exact="team_members")
@@ -597,6 +611,7 @@ class EventPlanning(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         context["online_hybrid_events"] = self.online_hybrid_events
         context["in_person_events"] = self.in_person_events
         context["event_count_by_team_member"] = self.event_count_by_team_member
+        context["all_events_in_selected_month"] = self.all_events_in_selected_month
         context["planning_calendar_dates"] = self.planning_calendar_dates
         context[
             "released_restricted_events_by_month_current_year"

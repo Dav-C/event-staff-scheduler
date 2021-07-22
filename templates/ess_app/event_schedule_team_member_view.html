@@ -86,100 +86,89 @@
                         <button class="options-btn-blue" id="ScheduleClearSearchBtn" type="button">Clear Search</button>
                     </a>
 {# search filter box #}
-                    <div id="searchFilterBox" class="search-filter-box">
-                        <div class="search-filter-form">
-                            <div class="search-filter-section">
-                                <span>Event Type</span>
-                                <hr>
-    {#                            Online Live Toggle#}
-                                <div class="search-filter-toggle-wrapper">
-                                    <label for="onlineLiveFilter" class="search-filter-toggle">
-                                        <input type="checkbox" id="onlineLiveFilter" name="online_live_filter" value="online_live"
-                                               {% if online_live_filter %}checked{% endif %}>
-                                        <span class="sliding-switch"></span>
-                                    </label>
-                                    <div class="sliding-switch-text">Online - Live</div>
-                                </div>
-    {#                            Online PreRecorded Toggle #}
-                                <div class="search-filter-toggle-wrapper">
-                                    <label for="onlinePreRecordedFilter" class="search-filter-toggle">
-                                        <input type="checkbox" id="onlinePreRecordedFilter" name="online_pre_recorded_filter" value="online_pre_recorded"
-                                               {% if online_pre_recorded_filter %}checked{% endif %}>
-                                        <span class="sliding-switch"></span>
-                                    </label>
-                                    <div class="sliding-switch-text">Online - Pre Recorded</div>
-                                </div>
-    {#                            Online Hybrid Toggle #}
-                                <div class="search-filter-toggle-wrapper">
-                                    <label for="onlineHybridFilter" class="search-filter-toggle">
-                                        <input type="checkbox" id="onlineHybridFilter" name="online_hybrid_filter" value="online_hybrid"
-                                               {% if online_hybrid_filter %}checked{% endif %}>
-                                        <span class="sliding-switch"></span>
-                                    </label>
-                                    <div class="sliding-switch-text">Online - Hybrid</div>
-                                </div>
-    {#                            In Person Toggle#}
-                                <div class="search-filter-toggle-wrapper">
-                                    <label for="inPersonFilter" class="search-filter-toggle">
-                                        <input type="checkbox" id="inPersonFilter" name="in_person_filter" value="in_person"
-                                               {% if in_person_filter %}checked{% endif %}>
-                                        <span class="sliding-switch"></span>
-                                    </label>
-                                    <div class="sliding-switch-text">In Person</div>
-                                </div>
+                <div id="searchFilterBox" class="search-filter-box">
+                    <div class="search-filter-form">
+                        <div class="search-filter-section">
+                            <span>Event Type</span>
+                            <hr>
+{#                            Online Live Toggle#}
+                            <div class="search-filter-toggle-wrapper">
+                                <label for="onlineLiveFilter" class="search-filter-toggle">
+                                    <input type="checkbox" id="onlineLiveFilter" name="online_live_filter" value="online_live"
+                                           {% if online_live_filter %}checked{% endif %}>
+                                    <span class="sliding-switch"></span>
+                                </label>
+                                <div class="sliding-switch-text">Online - Live</div>
                             </div>
-                            <div class="search-filter-section">
-                                <span>Event Status</span>
-                                <hr>
-    {#                            Planning Toggle #}
-                                <div class="search-filter-toggle-wrapper">
-                                    <label for="planningFilter" class="search-filter-toggle">
-                                        <input type="checkbox" id="planningFilter" name="planning_filter" value="planning"
-                                               {% if planning_filter %}checked{% endif %}>
-                                        <span class="sliding-switch"></span>
-                                    </label>
-                                    <div class="sliding-switch-text">Planning</div>
-                                </div>
-    {#                            Under Contract Toggle #}
-                                <div class="search-filter-toggle-wrapper">
-                                    <label for="underContractFilter" class="search-filter-toggle">
-                                        <input type="checkbox" id="underContractFilter" name="under_contract_filter"
-                                               value="under_contract"
-                                               {% if under_contract_filter %}checked{% endif %}>
-                                        <span class="sliding-switch"></span>
-                                    </label>
-                                    <div class="sliding-switch-text">Under Contract</div>
-                                </div>
-    {#                            Approved Toggle #}
-                                <div class="search-filter-toggle-wrapper">
-                                    <label for="approvedFilter" class="search-filter-toggle">
-                                        <input type="checkbox" id="approvedFilter" name="approved_filter" value="approved"
-                                               {% if approved_filter %}checked{% endif %}>
-                                        <span class="sliding-switch"></span>
-                                    </label>
-                                    <div class="sliding-switch-text">Approved</div>
-                                </div>
-    {#                            Cancelled Toggle #}
-                                <div class="search-filter-toggle-wrapper">
-                                    <label for="cancelledFilter" class="search-filter-toggle">
-                                        <input type="checkbox" id="cancelledFilter" name="cancelled_filter"
-                                               value="cancelled"
-                                               {% if cancelled_filter %}checked{% endif %}>
-                                        <span class="sliding-switch"></span>
-                                    </label>
-                                    <div class="sliding-switch-text">Cancelled</div>
-                                </div>
-                                <hr>
-                                <select class="schedule-search-input" name="released_restricted_filter"
-                                        id="ReleasedRestrictedFilter">
-                                    <option value="released_and_restricted">Released and Restricted</option>
-                                    <option value="released" {% if released_restricted_filter == 'released' %}
-                                            selected="selected"{% endif %}>Released
-                                    </option>
-                                    <option value="restricted" {% if released_restricted_filter == 'restricted' %}
-                                            selected="selected"{% endif %}>Restricted
-                                    </option>
-                                </select>
+{#                            Online PreRecorded Toggle #}
+                            <div class="search-filter-toggle-wrapper">
+                                <label for="onlinePreRecordedFilter" class="search-filter-toggle">
+                                    <input type="checkbox" id="onlinePreRecordedFilter" name="online_pre_recorded_filter" value="online_pre_recorded"
+                                           {% if online_pre_recorded_filter %}checked{% endif %}>
+                                    <span class="sliding-switch"></span>
+                                </label>
+                                <div class="sliding-switch-text">Online - Pre Recorded</div>
+                            </div>
+{#                            Online Hybrid Toggle #}
+                            <div class="search-filter-toggle-wrapper">
+                                <label for="onlineHybridFilter" class="search-filter-toggle">
+                                    <input type="checkbox" id="onlineHybridFilter" name="online_hybrid_filter" value="online_hybrid"
+                                           {% if online_hybrid_filter %}checked{% endif %}>
+                                    <span class="sliding-switch"></span>
+                                </label>
+                                <div class="sliding-switch-text">Online - Hybrid</div>
+                            </div>
+{#                            In Person Toggle#}
+                            <div class="search-filter-toggle-wrapper">
+                                <label for="inPersonFilter" class="search-filter-toggle">
+                                    <input type="checkbox" id="inPersonFilter" name="in_person_filter" value="in_person"
+                                           {% if in_person_filter %}checked{% endif %}>
+                                    <span class="sliding-switch"></span>
+                                </label>
+                                <div class="sliding-switch-text">In Person</div>
+                            </div>
+                        </div>
+                        <div class="search-filter-section">
+                            <span>Event Status</span>
+                            <hr>
+{#                            Planning Toggle #}
+                            <div class="search-filter-toggle-wrapper">
+                                <label for="planningFilter" class="search-filter-toggle">
+                                    <input type="checkbox" id="planningFilter" name="planning_filter" value="planning"
+                                           {% if planning_filter %}checked{% endif %}>
+                                    <span class="sliding-switch"></span>
+                                </label>
+                                <div class="sliding-switch-text">Planning</div>
+                            </div>
+{#                            Under Contract Toggle #}
+                            <div class="search-filter-toggle-wrapper">
+                                <label for="underContractFilter" class="search-filter-toggle">
+                                    <input type="checkbox" id="underContractFilter" name="under_contract_filter"
+                                           value="under_contract"
+                                           {% if under_contract_filter %}checked{% endif %}>
+                                    <span class="sliding-switch"></span>
+                                </label>
+                                <div class="sliding-switch-text">Under Contract</div>
+                            </div>
+{#                            Approved Toggle #}
+                            <div class="search-filter-toggle-wrapper">
+                                <label for="approvedFilter" class="search-filter-toggle">
+                                    <input type="checkbox" id="approvedFilter" name="approved_filter" value="approved"
+                                           {% if approved_filter %}checked{% endif %}>
+                                    <span class="sliding-switch"></span>
+                                </label>
+                                <div class="sliding-switch-text">Approved</div>
+                            </div>
+{#                            Cancelled Toggle #}
+                            <div class="search-filter-toggle-wrapper">
+                                <label for="cancelledFilter" class="search-filter-toggle">
+                                    <input type="checkbox" id="cancelledFilter" name="cancelled_filter"
+                                           value="cancelled"
+                                           {% if cancelled_filter %}checked{% endif %}>
+                                    <span class="sliding-switch"></span>
+                                </label>
+                                <div class="sliding-switch-text">Cancelled</div>
+                            </div>
                             </div>
                             <div class="search-filter-section">
                                 <span>Team Members</span>
