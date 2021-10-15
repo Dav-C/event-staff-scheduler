@@ -447,8 +447,9 @@ class EventPlanning(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 
     def handle_no_permission(self):
         if self.request.user.is_authenticated:
-            messages.warning(self.request,
-                             "Insufficient permission, you cannot access this page")
+            messages.warning(
+                self.request, "Insufficient permission, you cannot access this page"
+            )
             return redirect("event_list")
         else:
             messages.warning(self.request, "Please login to continue")
@@ -513,19 +514,18 @@ class EventPlanning(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         # create filtered query sets by event type for the count box (planning page)
         self.online_live_events = self.queryset.filter(
             start_datetime__month=self.date_query.month,
-            event_type__iexact="online_live"
+            event_type__iexact="online_live",
         )
         self.online_pre_recorded_events = self.queryset.filter(
             start_datetime__month=self.date_query.month,
-            event_type__iexact="online_pre_recorded"
+            event_type__iexact="online_pre_recorded",
         )
         self.online_hybrid_events = self.queryset.filter(
             start_datetime__month=self.date_query.month,
-            event_type__iexact="online_hybrid"
+            event_type__iexact="online_hybrid",
         )
         self.in_person_events = self.queryset.filter(
-            start_datetime__month=self.date_query.month,
-            event_type__iexact="in_person"
+            start_datetime__month=self.date_query.month, event_type__iexact="in_person"
         )
         self.all_events_in_selected_month = self.queryset.filter(
             start_datetime__month=self.date_query.month,
@@ -559,33 +559,25 @@ class EventPlanning(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         )
 
         # count events by event type and day/hour for lower block of planning page
-        self.event_count_by_day_and_hour_online_live = self.queryset.filter(
-            event_type="online_live"
-        ).values(
-            "start_datetime"
-        ).annotate(
-            event_count_online_live=Count("id")
+        self.event_count_by_day_and_hour_online_live = (
+            self.queryset.filter(event_type="online_live")
+            .values("start_datetime")
+            .annotate(event_count_online_live=Count("id"))
         )
-        self.event_count_by_day_and_hour_online_pre_recorded = self.queryset.filter(
-            event_type="online_pre_recorded"
-        ).values(
-            "start_datetime"
-        ).annotate(
-            event_count_online_pre_recorded=Count("id")
+        self.event_count_by_day_and_hour_online_pre_recorded = (
+            self.queryset.filter(event_type="online_pre_recorded")
+            .values("start_datetime")
+            .annotate(event_count_online_pre_recorded=Count("id"))
         )
-        self.event_count_by_day_and_hour_online_hybrid = self.queryset.filter(
-            event_type="online_hybrid"
-        ).values(
-            "start_datetime"
-        ).annotate(
-            event_count_online_hybrid=Count("id")
+        self.event_count_by_day_and_hour_online_hybrid = (
+            self.queryset.filter(event_type="online_hybrid")
+            .values("start_datetime")
+            .annotate(event_count_online_hybrid=Count("id"))
         )
-        self.event_count_by_day_and_hour_in_person = self.queryset.filter(
-            event_type="in_person"
-        ).values(
-            "start_datetime"
-        ).annotate(
-            event_count_in_person=Count("id")
+        self.event_count_by_day_and_hour_in_person = (
+            self.queryset.filter(event_type="in_person")
+            .values("start_datetime")
+            .annotate(event_count_in_person=Count("id"))
         )
 
         for calendar_date in days_of_the_month:

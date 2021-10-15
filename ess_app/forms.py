@@ -16,14 +16,10 @@ class TeamMessageForm(forms.ModelForm):
         fields = ["message_title", "message"]
         widgets = {
             "message_title": forms.TextInput(
-                attrs={
-                    "class": "detail-box-form-field full-width"
-                }
+                attrs={"class": "detail-box-form-field full-width"}
             ),
             "message": forms.Textarea(
-                attrs={
-                    "class": "detail-box-form-field full-width"
-                }
+                attrs={"class": "detail-box-form-field full-width"}
             ),
         }
 
